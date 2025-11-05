@@ -207,17 +207,4 @@ st.markdown("""
     <p>Desarrollado para facilitar el acceso a presentaciones académicas</p>
 </div>
 """, unsafe_allow_html=True)
-# %% 
-import qrcode
 
-# Tu link
-url = "https://congreso-paliativosgit-6rwmwcsu3ywuubntljx9gd.streamlit.app/"
-
-# Generar el QR
-qr = qrcode.make(url)
-
-# Guardar la imagen en tu carpeta actual
-qr.save("QR_congreso.png")
-
-print("✅ Código QR generado: QR_congreso.png")
-# %%
