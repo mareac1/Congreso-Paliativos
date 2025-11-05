@@ -108,64 +108,64 @@ if seccion == "📋 Resumen de la Investigación":
         La aplicación de inteligencia artificial permite identificar al agente responsable, el motivo del incumplimiento y su evitabilidad, 
         optimizando la gestión clínica y la continuidad de los cuidados.
         """)
+    st.markdown("### 📧 Contacto")
 
-        st.markdown("### 📧 Contacto")
+    st.markdown("""
+    **Ing. Catalina Reyes Camaño**  
+    Ingeniera Civil Biomédica – Universidad de Concepción  
+    Ingeniera Trainee – Healthtracker Analytics  
+    [https://healthtracker.ai/](https://healthtracker.ai/)
+    """)
 
-        st.markdown("""
-        **Ing. Catalina Reyes Camaño**  
-        Ingeniera Civil Biomédica – Universidad de Concepción  
-        Ingeniera Trainee – Healthtracker Analytics  
-        [https://healthtracker.ai/](https://healthtracker.ai/)
-        """)
+    st.markdown("---")
+    st.markdown("### 📝 Formulario de Contacto")
 
-        st.markdown("---")
-        st.markdown("### 📝 Formulario de Contacto")
-
-        with st.form("contact_form"):
-            nombre = st.text_input("👤 Nombre completo *")
-            email = st.text_input("📧 Email *")
-            asunto = st.selectbox(
-                "📋 Motivo de contacto *",
-                [
-                    "Consulta general sobre la investigación",
-                    "Colaboración o replicación de modelo",
-                    "Implementación institucional",
-                    "Solicitud de información técnica",
-                    "Otro"
-                ]
-            )
-            mensaje = st.text_area("💬 Mensaje *", height=150)
-            col1, col2 = st.columns(2)
-            with col1:
-                submitted = st.form_submit_button("📤 Enviar Mensaje", use_container_width=True)
-            with col2:
-                if st.form_submit_button("🔄 Limpiar", use_container_width=True):
-                    st.rerun()
-
-        if submitted:
-            if not nombre or not email or not asunto or not mensaje:
-                st.error("❌ Todos los campos son obligatorios.")
-            else:
-                with st.spinner("📤 Enviando mensaje..."):
-                    success, msg = enviar_correo(nombre, email, asunto, mensaje, "Gestión de Inasistencias IA CCPP")
-                if success:
-                    st.success("✅ " + msg)
-                    st.info("📧 Tu mensaje ha sido enviado. Te contactaremos pronto.")
-                    st.balloons()
-                else:
-                    st.error("❌ " + msg)
-
+    with st.form("contact_form"):
+        nombre = st.text_input("👤 Nombre completo *")
+        email = st.text_input("📧 Email *")
+        asunto = st.selectbox(
+            "📋 Motivo de contacto *",
+            [
+                "Consulta general sobre la investigación",
+                "Colaboración o replicación de modelo",
+                "Implementación institucional",
+                "Solicitud de información técnica",
+                "Otro"
+            ]
+        )
+        mensaje = st.text_area("💬 Mensaje *", height=150)
+        col1, col2 = st.columns(2)
+        with col1:
+            submitted = st.form_submit_button("📤 Enviar Mensaje", use_container_width=True)
         with col2:
-            st.markdown("""
-            <div style="background: linear-gradient(135deg, #4facfe, #00f2fe);
-                        padding: 1.5rem; border-radius: 15px; color: white; text-align: center;">
-                <h3>📊 Datos Relevantes</h3>
-                <h2>18%</h2>
-                <p>Atenciones programadas inicialmente sin análisis sistemático</p>
-                <h2>2022–2025</h2>
-                <p>Período de registros analizados</p>
-            </div>
-            """, unsafe_allow_html=True)
+            if st.form_submit_button("🔄 Limpiar", use_container_width=True):
+                st.rerun()
+
+    if submitted:
+        if not nombre or not email or not asunto or not mensaje:
+            st.error("❌ Todos los campos son obligatorios.")
+        else:
+            with st.spinner("📤 Enviando mensaje..."):
+                success, msg = enviar_correo(nombre, email, asunto, mensaje, "Gestión de Inasistencias IA CCPP")
+            if success:
+                st.success("✅ " + msg)
+                st.info("📧 Tu mensaje ha sido enviado. Te contactaremos pronto.")
+                st.balloons()
+            else:
+                st.error("❌ " + msg)
+        
+
+    with col2:
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #4facfe, #00f2fe);
+                    padding: 1.5rem; border-radius: 15px; color: white; text-align: center;">
+            <h3>📊 Datos Relevantes</h3>
+            <h2>18%</h2>
+            <p>Atenciones programadas inicialmente sin análisis sistemático</p>
+            <h2>2022–2025</h2>
+            <p>Período de registros analizados</p>
+        </div>
+        """, unsafe_allow_html=True)
 
 elif seccion == "🎯 Objetivo y Desarrollo":
     st.markdown("### 🎯 Objetivo y Desarrollo de la Experiencia")
