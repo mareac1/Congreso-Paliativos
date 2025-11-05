@@ -107,7 +107,20 @@ if seccion == "📋 Resumen de la Investigación":
         La gestión de inasistencias es compleja debido a la diversidad de registros entre sistemas clínicos y agendas administrativas.  
         La aplicación de inteligencia artificial permite identificar al agente responsable, el motivo del incumplimiento y su evitabilidad, 
         optimizando la gestión clínica y la continuidad de los cuidados.
-        """)
+        """) 
+
+    with col2:
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #4facfe, #00f2fe);
+                    padding: 1.5rem; border-radius: 15px; color: white; text-align: center;">
+            <h3>📊 Datos Relevantes</h3>
+            <h2>18%</h2>
+            <p>Atenciones programadas inicialmente sin análisis sistemático</p>
+            <h2>2022–2025</h2>
+            <p>Período de registros analizados</p>
+        </div>
+        """, unsafe_allow_html=True)
+
     st.markdown("### 📧 Contacto")
 
     st.markdown("""
@@ -153,20 +166,7 @@ if seccion == "📋 Resumen de la Investigación":
                 st.balloons()
             else:
                 st.error("❌ " + msg)
-        
-
-    with col2:
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, #4facfe, #00f2fe);
-                    padding: 1.5rem; border-radius: 15px; color: white; text-align: center;">
-            <h3>📊 Datos Relevantes</h3>
-            <h2>18%</h2>
-            <p>Atenciones programadas inicialmente sin análisis sistemático</p>
-            <h2>2022–2025</h2>
-            <p>Período de registros analizados</p>
-        </div>
-        """, unsafe_allow_html=True)
-
+       
 elif seccion == "🎯 Objetivo y Desarrollo":
     st.markdown("### 🎯 Objetivo y Desarrollo de la Experiencia")
 
