@@ -86,7 +86,7 @@ def correo_simple(asunto, cuerpo_html, destinatarios):
     sesion_smtp.sendmail(remitente, destinatarios, mensaje.as_string())
     print('📨 Correo enviado')
     sesion_smtp.quit()
-    time.sleep(15)
+
 # Configuración de la página
 st.set_page_config(
     page_title="Uso de Inteligencia Artificial para la gestión de inasistencias",
