@@ -56,6 +56,36 @@ def enviar_correo(nombre, email, asunto, mensaje, origen_pagina="Pacientes Crít
         return True, "Correo enviado exitosamente"
     except Exception as e:
         return False, f"Error al enviar correo: {str(e)}"
+def correo_simple(asunto, cuerpo_html, destinatarios):
+    remitente = 'luz.ia@healthtracker.ai'
+    pass_remitente = 'zumt uxtw tmkm gdjk'
+    
+    sesion_smtp = smtplib.SMTP(host='smtp.gmail.com', port=587)
+    sesion_smtp.ehlo()
+    sesion_smtp.starttls()
+    sesion_smtp.login(remitente, pass_remitente)
+
+
+    mensaje = MIMEMultipart('mixed')
+    mensaje['From'] = remitente
+    mensaje['To'] = ", ".join(destinatarios)
+    mensaje['Subject'] = asunto
+
+    cuerpo_completo = f"""
+    <html>
+    <body>
+        {cuerpo_html}
+        <br><br>
+    </body>
+    </html>
+    """
+
+    mensaje.attach(MIMEText(cuerpo_completo, 'html'))
+
+    # Enviar correo
+    sesion_smtp.sendmail(remitente, destinatarios, mensaje.as_string())
+    print('📨 Correo enviado')
+    sesion_smtp.quit()
 
 # Configuración de la página
 st.set_page_config(
@@ -124,102 +154,6 @@ if seccion == "📋 Resumen de la Investigación":
         </div>
         """, unsafe_allow_html=True)
 
-elif seccion == "🎯 Objetivo y Desarrollo":
-    st.markdown("### 🎯 Objetivo y Desarrollo de la Experiencia")
-
-    st.markdown("""
-    #### 🎯 Objetivo
-    Aplicar el modelo **RFM (Recencia, Frecuencia y Monto de consumo)** al contexto de cuidados paliativos domiciliarios, 
-    para **identificar pacientes críticos**, priorizar su seguimiento clínico y optimizar la asignación de recursos asistenciales.
-
-    #### 🧩 Desarrollo
-    1. **Selección de variables:** se definieron tres indicadores principales (Recencia, Frecuencia y Monto).  
-    2. **Procesamiento de datos:** se estandarizaron registros y se aplicó un algoritmo no supervisado de segmentación, adaptado al contexto clínico.  
-    3. **Identificación de grupos:** el modelo clasificó pacientes en **4 grupos** según riesgo, adherencia y consumo de recursos.  
-    4. **Visualización:** integración en un panel interactivo en **Looker Studio**, mostrando distribución, evolución y vista individual por paciente.
-    """)
-
-elif seccion == "📊 Resultados":
-    st.markdown("### 📊 Resultados Principales")
-
-    col1, col2 = st.columns([3, 2])
-    with col1:
-        st.markdown("""
-        #### 📈 Grupos identificados
-        - **Grupo 1:** bajo contacto y escasa frecuencia de atenciones → alto riesgo de abandono.  
-        - **Grupo 2:** alta frecuencia e inestabilidad → requiere monitoreo intensivo.  
-        - **Grupo 3:** seguimiento adecuado y adherencia estable.  
-        - **Grupo 4:** adherencia óptima, buena estabilidad clínica y bajo uso de recursos.  
-
-        Esta clasificación permite priorizar el seguimiento de pacientes más vulnerables (clústeres 1 y 2) 
-        y reconocer buenas prácticas en los grupos de mejor desempeño (3 y 4).  
-        """)
-    with col2:
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, #11998e, #38ef7d);
-                    padding: 2rem; border-radius: 15px; color: white; text-align: center;">
-            <h3>🎯 Resultados Clave</h3>
-            <hr style="border-color:white;">
-            <h4>🧠 Clasificación RFM aplicada al ámbito clínico</h4>
-            <h4>🔍 Identificación de pacientes críticos</h4>
-            <h4>📊 Integración en panel Looker Studio</h4>
-            <h4>🤝 Mejora en priorización y eficiencia</h4>
-        </div>
-        """, unsafe_allow_html=True)
-
-elif seccion == "💡 Conclusiones":
-    st.markdown("### 💡 Conclusiones")
-
-    st.markdown("""
-    - La aplicación del modelo **RFM** en cuidados paliativos domiciliarios permite segmentar y priorizar pacientes según su comportamiento clínico y uso de recursos.  
-    - Promueve una **gestión proactiva y basada en datos**, mejorando la continuidad y calidad del cuidado.  
-    - Permite **reconocer patrones de riesgo**, fortalecer la toma de decisiones y destacar buenas prácticas.  
-    - Favorece la integración entre equipos clínicos y analíticos mediante herramientas digitales.  
-    """)
-
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, #56ab2f, #a8e6cf);
-                padding: 1.5rem; border-radius: 15px; color: white; text-align: center;">
-        <h3>🏆 Conclusión General</h3>
-        <p>El modelo RFM fortalece la gestión clínica en cuidados paliativos, integrando analítica avanzada 
-        y segmentación automatizada para mejorar la continuidad y eficiencia del cuidado.</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-elif seccion == "📥 Descargas":
-    st.markdown("### 📥 Descarga y Vista Previa del Póster")
-
-    file_path = os.path.join(parent_dir, "assets", "[GONZALO ROJAS] 3 - Congreso Cuidados Paliativos 2025 T24.pptx.pdf")
-    if os.path.exists(file_path):
-        with open(file_path, "rb") as pdf_file:
-            pdf_data = pdf_file.read()
-        st.download_button(
-            label="📄 Descargar Póster (PDF)",
-            data=pdf_data,
-            file_name="Pacientes_Criticos_RFM.pdf",
-            mime="application/pdf",
-            use_container_width=True
-        )
-
-        # Vista previa en proporción 3:4 (vertical)
-        with open(file_path, "rb") as f:
-            base64_pdf = base64.b64encode(f.read()).decode('utf-8')
-        pdf_display = f"""
-        <div style="text-align:center; margin-top:1rem;">
-            <iframe 
-                src="data:application/pdf;base64,{base64_pdf}" 
-                width="100%" 
-                height="1200px" 
-                style="border:none; border-radius:12px; box-shadow:0 0 10px rgba(0,0,0,0.1);"
-            ></iframe>
-            <p style="color:#666; font-size:0.9rem; margin-top:0.5rem;">Vista previa del póster (proporción 3:4)</p>
-        </div>
-        """
-        st.markdown(pdf_display, unsafe_allow_html=True)
-    else:
-        st.warning("⚠️ El archivo PDF no está disponible en este momento.")
-
-elif seccion == "📧 Contacto":
     st.markdown("### 📧 Contacto")
 
     st.markdown("""
@@ -234,6 +168,8 @@ elif seccion == "📧 Contacto":
 
     with st.form("contact_form"):
         nombre = st.text_input("👤 Nombre completo *")
+        institucion = st.text_input("🏢 Institución / Empresa *")
+        cargo = st.text_input("💼 Cargo / Profesión *")
         email = st.text_input("📧 Email *")
         asunto = st.selectbox(
             "📋 Motivo de contacto *",
@@ -246,6 +182,11 @@ elif seccion == "📧 Contacto":
             ]
         )
         mensaje = st.text_area("💬 Mensaje *", height=150)
+        
+        aceptar = st.checkbox(
+            "✅ Acepto que el equipo de Healthtracker Analytics se comunique conmigo por correo electrónico"
+        )
+
         col1, col2 = st.columns(2)
         with col1:
             submitted = st.form_submit_button("📤 Enviar Mensaje", use_container_width=True)
@@ -256,15 +197,34 @@ elif seccion == "📧 Contacto":
     if submitted:
         if not nombre or not email or not asunto or not mensaje:
             st.error("❌ Todos los campos son obligatorios.")
+        elif not aceptar:
+            st.warning("⚠️ Debes aceptar el envío de correos para poder continuar.")
         else:
             with st.spinner("📤 Enviando mensaje..."):
-                success, msg = enviar_correo(nombre, email, asunto, mensaje, "Pacientes Críticos RFM CCPP")
+                success, msg = enviar_correo(nombre, email, asunto, mensaje, "Gestión de Inasistencias IA CCPP")
+                
+                # Enviar correo simple con saludo de luz.ia y el enlace
+                cuerpo_html = f"""
+                <p>Hola,</p>
+                <p>Espero que te encuentres bien. Te comparto el enlace de referencia:</p>
+                <br>
+                <p><a href="https://drive.google.com/file/d/1JSNZ8gTKeqZrQFqz-gp1CKv9Ub9dILe6/view?usp=drive_link">Ver documento en Drive</a></p>
+                <br>
+                <p>Saludos,<br>Luz.IA</p>
+                """
+                correo_simple(
+                    asunto="Enlace de referencia - Gestión de Inasistencias IA",
+                    cuerpo_html=cuerpo_html,
+                    destinatarios=[email]
+                )
+                
             if success:
                 st.success("✅ " + msg)
                 st.info("📧 Tu mensaje ha sido enviado. Te contactaremos pronto.")
                 st.balloons()
             else:
                 st.error("❌ " + msg)
+
 
 st.markdown("---")
 st.markdown("""

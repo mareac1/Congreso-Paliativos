@@ -115,12 +115,7 @@ st.sidebar.title("🧭 Navegación")
 seccion = st.sidebar.radio(
     "Selecciona una sección:",
     [
-        "📋 Resumen de la Investigación",
-        "🎯 Objetivo y Desarrollo",
-        "📊 Resultados",
-        "💡 Conclusiones",
-        "📥 Descargas",
-        "📧 Contacto"
+        "📋 Resumen de la Investigación"
     ]
 )
 
@@ -165,6 +160,8 @@ if seccion == "📋 Resumen de la Investigación":
 
     with st.form("contact_form"):
         nombre = st.text_input("👤 Nombre completo *")
+        institucion = st.text_input("🏢 Institución / Empresa *")
+        cargo = st.text_input("💼 Cargo / Profesión *")
         email = st.text_input("📧 Email *")
         asunto = st.selectbox(
             "📋 Motivo de contacto *",
@@ -179,7 +176,7 @@ if seccion == "📋 Resumen de la Investigación":
         mensaje = st.text_area("💬 Mensaje *", height=150)
         
         aceptar = st.checkbox(
-            "✅ Acepto que el equipo de Healthtracker Analytics se comunique conmigo por correo electrónico en relación con esta investigación."
+            "✅ Acepto que el equipo de Healthtracker Analytics se comunique conmigo por correo electrónico"
         )
 
         col1, col2 = st.columns(2)
