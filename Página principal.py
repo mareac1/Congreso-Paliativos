@@ -4,7 +4,7 @@ import os
 
 # Configuración de la página principal
 st.set_page_config(
-    page_title="Congresos Cuidados Paliativos - Red Salud",
+    page_title="Congresos Cuidados Paliativos",
     page_icon="🏥",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -55,7 +55,7 @@ st.markdown("""
 st.markdown("""
 <div class="main-header">
     <h1>🏥 Congresos de Cuidados Paliativos</h1>
-    <h3>Red Salud - Presentaciones Académicas</h3>
+    <h3>Presentaciones Académicas</h3>
 </div>
 """, unsafe_allow_html=True)
 
@@ -184,26 +184,40 @@ with col9:
 
 
 # Información adicional
-st.markdown("---")
-st.markdown("""
-### ℹ️ Información Adicional
+# st.markdown("---")
+# st.markdown("""
+# ### ℹ️ Información Adicional
 
-Esta aplicación presenta tres investigaciones desarrolladas por Red Salud en el ámbito de los cuidados paliativos:
+# Esta aplicación presenta tres investigaciones desarrolladas por Red Salud en el ámbito de los cuidados paliativos:
 
-1. **Detección Temprana mediante IA**: Utiliza tecnologías de inteligencia artificial para mejorar la identificación temprana de pacientes que requieren cuidados paliativos.
+# 1. **Detección Temprana mediante IA**: Utiliza tecnologías de inteligencia artificial para mejorar la identificación temprana de pacientes que requieren cuidados paliativos.
 
-2. **Modelo Institucional de Formación**: Presenta la experiencia y metodología desarrollada para la formación continua del personal sanitario en cuidados paliativos.
+# 2. **Modelo Institucional de Formación**: Presenta la experiencia y metodología desarrollada para la formación continua del personal sanitario en cuidados paliativos.
 
-3. **Estrategia de Mitigación del Burnout**: Implementación de un plan sistemático para la detección precoz y mitigación del síndrome de burnout en equipos de cuidados paliativos domiciliarios.
+# 3. **Estrategia de Mitigación del Burnout**: Implementación de un plan sistemático para la detección precoz y mitigación del síndrome de burnout en equipos de cuidados paliativos domiciliarios.
 
-Todas las presentaciones incluyen material descargable y códigos QR para facilitar el acceso a los recursos.
-""")
+# Todas las presentaciones incluyen material descargable y códigos QR para facilitar el acceso a los recursos.
+# """)
 
 # Footer
 st.markdown("---")
 st.markdown("""
 <div style="text-align: center; color: #666; padding: 1rem;">
-    <p>© 2024 Red Salud - Congresos de Cuidados Paliativos</p>
+    <p>Congresos de Cuidados Paliativos</p>
     <p>Desarrollado para facilitar el acceso a presentaciones académicas</p>
 </div>
 """, unsafe_allow_html=True)
+# %% 
+import qrcode
+
+# Tu link
+url = "https://congreso-paliativosgit-6rwmwcsu3ywuubntljx9gd.streamlit.app/"
+
+# Generar el QR
+qr = qrcode.make(url)
+
+# Guardar la imagen en tu carpeta actual
+qr.save("QR_congreso.png")
+
+print("✅ Código QR generado: QR_congreso.png")
+# %%
