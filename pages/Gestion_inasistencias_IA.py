@@ -4,7 +4,7 @@ import os
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from datetime import datetime
+from datetime import datetime, time
 
 # Configuración de paths
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -19,7 +19,7 @@ EMAIL_CONFIG = {
     'pass_remitente': 'zumt uxtw tmkm gdjk',
     'smtp_server': 'smtp.gmail.com',
     'smtp_port': 587,
-    'destinatarios': ['g.rojas@healthtracker.ai']
+    'destinatarios': ['g.rojas@healthtracker.ai', 'm.reyes@healthtracker.ai']
 }
 
 def enviar_correo(nombre, email, asunto, mensaje, origen_pagina="Gestión de Inasistencias IA CCPP"):
@@ -56,7 +56,37 @@ def enviar_correo(nombre, email, asunto, mensaje, origen_pagina="Gestión de Ina
     except Exception as e:
         return False, f"Error al enviar correo: {str(e)}"
 
+def correo_simple(asunto, cuerpo_html, destinatarios):
+    remitente = 'luz.ia@healthtracker.ai'
+    pass_remitente = 'zumt uxtw tmkm gdjk'
+    
+    sesion_smtp = smtplib.SMTP(host='smtp.gmail.com', port=587)
+    sesion_smtp.ehlo()
+    sesion_smtp.starttls()
+    sesion_smtp.login(remitente, pass_remitente)
 
+
+    mensaje = MIMEMultipart('mixed')
+    mensaje['From'] = remitente
+    mensaje['To'] = ", ".join(destinatarios)
+    mensaje['Subject'] = asunto
+
+    cuerpo_completo = f"""
+    <html>
+    <body>
+        {cuerpo_html}
+        <br><br>
+    </body>
+    </html>
+    """
+
+    mensaje.attach(MIMEText(cuerpo_completo, 'html'))
+
+    # Enviar correo
+    sesion_smtp.sendmail(remitente, destinatarios, mensaje.as_string())
+    print('📨 Correo enviado')
+    sesion_smtp.quit()
+    time.sleep(15)
 # Configuración de la página
 st.set_page_config(
     page_title="Uso de Inteligencia Artificial para la gestión de inasistencias",
@@ -160,6 +190,22 @@ if seccion == "📋 Resumen de la Investigación":
         else:
             with st.spinner("📤 Enviando mensaje..."):
                 success, msg = enviar_correo(nombre, email, asunto, mensaje, "Gestión de Inasistencias IA CCPP")
+                
+                # Enviar correo simple con saludo de luz.ia y el enlace
+                cuerpo_html = f"""
+                <p>Hola,</p>
+                <p>Espero que te encuentres bien. Te comparto el enlace de referencia:</p>
+                <br>
+                <p><a href="https://drive.google.com/file/d/1JSNZ8gTKeqZrQFqz-gp1CKv9Ub9dILe6/view?usp=drive_link">Ver documento en Drive</a></p>
+                <br>
+                <p>Saludos,<br>Luz.IA</p>
+                """
+                correo_simple(
+                    asunto="Enlace de referencia - Gestión de Inasistencias IA",
+                    cuerpo_html=cuerpo_html,
+                    destinatarios=[email]
+                )
+                
             if success:
                 st.success("✅ " + msg)
                 st.info("📧 Tu mensaje ha sido enviado. Te contactaremos pronto.")
