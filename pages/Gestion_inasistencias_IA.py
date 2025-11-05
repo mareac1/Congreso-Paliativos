@@ -22,8 +22,8 @@ EMAIL_CONFIG = {
     'destinatarios': ['g.rojas@healthtracker.ai', 'm.reyes@healthtracker.ai', 'f.moreno@healthtracker.ai', 'j.jimenez@healthtracker.ai', 't.schade@healthtracker.ai', 's.villagra@healthtracker.ai', 'c.reyes@healthtracker.ai']
 }
 
-def enviar_correo(nombre, email, asunto, mensaje, origen_pagina="Gestión de Inasistencias IA CCPP"):
-    """Función para enviar correos electrónicos usando SMTP"""
+def enviar_correo(nombre, email, asunto, mensaje, institucion, cargo, origen_pagina="Pacientes Críticos RFM CCPP"):
+    """Envía correos electrónicos usando SMTP."""
     try:
         msg = MIMEMultipart()
         msg['From'] = EMAIL_CONFIG['remitente']
@@ -40,22 +40,27 @@ def enviar_correo(nombre, email, asunto, mensaje, origen_pagina="Gestión de Ina
         MENSAJE:
         {mensaje}
 
+        INSTITUCIÓN:
+        {institucion}
+
+        CARGO:
+        {cargo}
+
         ---
         Enviado desde: {origen_pagina}
         Fecha: {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}
         """
 
         msg.attach(MIMEText(body, 'plain', 'utf-8'))
-        sesion_smtp = smtplib.SMTP(EMAIL_CONFIG['smtp_server'], EMAIL_CONFIG['smtp_port'])
-        sesion_smtp.starttls()
-        sesion_smtp.login(EMAIL_CONFIG['remitente'], EMAIL_CONFIG['pass_remitente'])
-        sesion_smtp.sendmail(EMAIL_CONFIG['remitente'], EMAIL_CONFIG['destinatarios'], msg.as_string())
-        sesion_smtp.quit()
+        smtp = smtplib.SMTP(EMAIL_CONFIG['smtp_server'], EMAIL_CONFIG['smtp_port'])
+        smtp.starttls()
+        smtp.login(EMAIL_CONFIG['remitente'], EMAIL_CONFIG['pass_remitente'])
+        smtp.sendmail(EMAIL_CONFIG['remitente'], EMAIL_CONFIG['destinatarios'], msg.as_string())
+        smtp.quit()
 
         return True, "Correo enviado exitosamente"
     except Exception as e:
         return False, f"Error al enviar correo: {str(e)}"
-
 def correo_simple(asunto, cuerpo_html, destinatarios):
     remitente = 'luz.ia@healthtracker.ai'
     pass_remitente = 'zumt uxtw tmkm gdjk'
@@ -86,6 +91,14 @@ def correo_simple(asunto, cuerpo_html, destinatarios):
     sesion_smtp.sendmail(remitente, destinatarios, mensaje.as_string())
     print('📨 Correo enviado')
     sesion_smtp.quit()
+
+# Configuración de la página
+st.set_page_config(
+    page_title="Identificación de pacientes críticos en Cuidados Paliativos",
+    page_icon="📉",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
 # Configuración de la página
 st.set_page_config(
@@ -193,7 +206,7 @@ if seccion == "📋 Resumen de la Investigación":
             st.warning("⚠️ Debes aceptar el envío de correos para poder continuar.")
         else:
             with st.spinner("📤 Enviando mensaje..."):
-                success, msg = enviar_correo(nombre, email, asunto, mensaje, "Gestión de Inasistencias IA CCPP")
+                success, msg = enviar_correo(nombre, email, asunto, mensaje, institucion, cargo, "Gestión de Inasistencias IA CCPP")
                 
                 # Enviar correo simple con saludo de luz.ia y el enlace
                 cuerpo_html = f"""

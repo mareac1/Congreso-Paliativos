@@ -23,7 +23,7 @@ EMAIL_CONFIG = {
     'destinatarios': ['g.rojas@healthtracker.ai']
 }
 
-def enviar_correo(nombre, email, asunto, mensaje, origen_pagina="Pacientes Críticos RFM CCPP"):
+def enviar_correo(nombre, email, asunto, mensaje, institucion, cargo, origen_pagina="Pacientes Críticos RFM CCPP"):
     """Envía correos electrónicos usando SMTP."""
     try:
         msg = MIMEMultipart()
@@ -40,6 +40,12 @@ def enviar_correo(nombre, email, asunto, mensaje, origen_pagina="Pacientes Crít
 
         MENSAJE:
         {mensaje}
+
+        INSTITUCIÓN:
+        {institucion}
+
+        CARGO:
+        {cargo}
 
         ---
         Enviado desde: {origen_pagina}
@@ -116,11 +122,7 @@ seccion = st.sidebar.radio(
     "Selecciona una sección:",
     [
         "📋 Resumen de la Investigación",
-        "🎯 Objetivo y Desarrollo",
-        "📊 Resultados",
-        "💡 Conclusiones",
-        "📥 Descargas",
-        "📧 Contacto"
+
     ]
 )
 
@@ -201,14 +203,14 @@ if seccion == "📋 Resumen de la Investigación":
             st.warning("⚠️ Debes aceptar el envío de correos para poder continuar.")
         else:
             with st.spinner("📤 Enviando mensaje..."):
-                success, msg = enviar_correo(nombre, email, asunto, mensaje, "Gestión de Inasistencias IA CCPP")
+                success, msg = enviar_correo(nombre, email, asunto, mensaje, institucion, cargo, "Gestión de Inasistencias IA CCPP")
                 
                 # Enviar correo simple con saludo de luz.ia y el enlace
                 cuerpo_html = f"""
                 <p>Hola,</p>
                 <p>Espero que te encuentres bien. Te comparto el enlace de referencia:</p>
                 <br>
-                <p><a href="https://drive.google.com/file/d/1JSNZ8gTKeqZrQFqz-gp1CKv9Ub9dILe6/view?usp=drive_link">Ver documento en Drive</a></p>
+                <p><a href="https://drive.google.com/file/d/1EwJ4USDpNdQiW3BpsTcpTlVyH_WeFwAg/view?usp=drive_link">Ver documento en Drive</a></p>
                 <br>
                 <p>Saludos,<br>Luz.IA</p>
                 """

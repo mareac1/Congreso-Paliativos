@@ -23,7 +23,7 @@ EMAIL_CONFIG = {
     'destinatarios': ['g.rojas@healthtracker.ai']
 }
 
-def enviar_correo(nombre, email, asunto, mensaje, origen_pagina="Extracción de Correos IA CCPP"):
+def enviar_correo(nombre, email, asunto, mensaje, institucion, cargo, origen_pagina="Pacientes Críticos RFM CCPP"):
     """Envía correos electrónicos usando SMTP."""
     try:
         msg = MIMEMultipart()
@@ -41,6 +41,12 @@ def enviar_correo(nombre, email, asunto, mensaje, origen_pagina="Extracción de 
         MENSAJE:
         {mensaje}
 
+        INSTITUCIÓN:
+        {institucion}
+
+        CARGO:
+        {cargo}
+
         ---
         Enviado desde: {origen_pagina}
         Fecha: {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}
@@ -56,7 +62,36 @@ def enviar_correo(nombre, email, asunto, mensaje, origen_pagina="Extracción de 
         return True, "Correo enviado exitosamente"
     except Exception as e:
         return False, f"Error al enviar correo: {str(e)}"
+def correo_simple(asunto, cuerpo_html, destinatarios):
+    remitente = 'luz.ia@healthtracker.ai'
+    pass_remitente = 'zumt uxtw tmkm gdjk'
+    
+    sesion_smtp = smtplib.SMTP(host='smtp.gmail.com', port=587)
+    sesion_smtp.ehlo()
+    sesion_smtp.starttls()
+    sesion_smtp.login(remitente, pass_remitente)
 
+
+    mensaje = MIMEMultipart('mixed')
+    mensaje['From'] = remitente
+    mensaje['To'] = ", ".join(destinatarios)
+    mensaje['Subject'] = asunto
+
+    cuerpo_completo = f"""
+    <html>
+    <body>
+        {cuerpo_html}
+        <br><br>
+    </body>
+    </html>
+    """
+
+    mensaje.attach(MIMEText(cuerpo_completo, 'html'))
+
+    # Enviar correo
+    sesion_smtp.sendmail(remitente, destinatarios, mensaje.as_string())
+    print('📨 Correo enviado')
+    sesion_smtp.quit()
 # Configuración de la página
 st.set_page_config(
     page_title="Extracción de información clínica desde correos electrónicos con IA",
@@ -85,12 +120,7 @@ st.sidebar.title("🧭 Navegación")
 seccion = st.sidebar.radio(
     "Selecciona una sección:",
     [
-        "📋 Resumen de la Investigación",
-        "🎯 Objetivo y Desarrollo",
-        "📊 Resultados",
-        "💡 Conclusiones",
-        "📥 Descargas",
-        "📧 Contacto"
+        "📋 Resumen de la Investigación"
     ]
 )
 
@@ -118,103 +148,6 @@ if seccion == "📋 Resumen de la Investigación":
             <p>Proyectos en operación o piloto</p>
         </div>
         """, unsafe_allow_html=True)
-
-elif seccion == "🎯 Objetivo y Desarrollo":
-    st.markdown("### 🎯 Objetivo y Desarrollo de la Experiencia")
-
-    st.markdown("""
-    #### 🎯 Objetivo
-    Desarrollar e implementar un **sistema automatizado** que, mediante bots y modelos de IA, 
-    sea capaz de **leer, anonimizar y clasificar texto libre** proveniente de correos clínicos, 
-    reduciendo la carga manual y garantizando la **protección de datos personales**.
-
-    #### 🧩 Desarrollo
-    - Se diseñaron flujos automáticos para la clasificación de correos de respuesta.  
-    - El sistema comienza con la **anonimización** de datos personales.  
-    - Los correos se clasifican mediante IA en **válidos e irrelevantes**.  
-    - Los válidos son procesados con **Gemini 2.0 (Google Cloud)**, que interpreta y estructura la información de los adjuntos.  
-    - Los registros válidos se consolidan para trazabilidad y análisis continuo.  
-    """)
-
-elif seccion == "📊 Resultados":
-    st.markdown("### 📊 Resultados Principales")
-
-    col1, col2 = st.columns([3, 2])
-    with col1:
-        st.markdown("""
-        #### 📈 Impacto del sistema
-        - Detección automatizada con **alta concordancia** respecto al juicio experto.  
-        - Reducción significativa en el **tiempo de revisión manual**.  
-        - Mejora de la **trazabilidad** y calidad del registro clínico.  
-        - **150 correos mensuales** procesados en promedio.  
-        - Dos proyectos en producción y uno en fase piloto desde octubre 2025.  
-        """)
-    with col2:
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, #11998e, #38ef7d);
-                    padding: 2rem; border-radius: 15px; color: white; text-align: center;">
-            <h3>🎯 Resultados Clave</h3>
-            <hr style="border-color:white;">
-            <h4>🤖 Clasificación automática de correos</h4>
-            <h4>📂 Estructuración de información clínica</h4>
-            <h4>⏱️ Ahorro de tiempo para el equipo</h4>
-            <h4>🔒 Anonimización y trazabilidad</h4>
-        </div>
-        """, unsafe_allow_html=True)
-
-elif seccion == "💡 Conclusiones":
-    st.markdown("### 💡 Conclusiones")
-
-    st.markdown("""
-    - La automatización de la lectura y clasificación de correos mediante IA **mejora la eficiencia operativa**.  
-    - **Reduce la carga administrativa** del equipo de coordinación.  
-    - Garantiza la **confidencialidad y estructuración de datos** clínicos.  
-    - Contribuye a la **continuidad asistencial** en cuidados paliativos domiciliarios.  
-    """)
-
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, #56ab2f, #a8e6cf);
-                padding: 1.5rem; border-radius: 15px; color: white; text-align: center;">
-        <h3>🏆 Conclusión General</h3>
-        <p>La automatización de correos clínicos con IA permite optimizar los procesos administrativos, 
-        fortalecer la trazabilidad y asegurar la continuidad de los cuidados paliativos.</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-elif seccion == "📥 Descargas":
-    st.markdown("### 📥 Descarga y Vista Previa del Póster")
-
-    file_path = os.path.join(parent_dir, "assets", "[MATIAS REYES] Extracción de información clínica desde correos electrónicos en cuidados paliativos mediante inteligencia artificial.pptx.pdf")
-    if os.path.exists(file_path):
-        with open(file_path, "rb") as pdf_file:
-            pdf_data = pdf_file.read()
-        st.download_button(
-            label="📄 Descargar Póster (PDF)",
-            data=pdf_data,
-            file_name="Extraccion_correos_IA.pdf",
-            mime="application/pdf",
-            use_container_width=True
-        )
-
-        # Vista previa 3:4 (vertical)
-        with open(file_path, "rb") as f:
-            base64_pdf = base64.b64encode(f.read()).decode('utf-8')
-        pdf_display = f"""
-        <div style="text-align:center; margin-top:1rem;">
-            <iframe 
-                src="data:application/pdf;base64,{base64_pdf}" 
-                width="100%" 
-                height="1200px" 
-                style="border:none; border-radius:12px; box-shadow:0 0 10px rgba(0,0,0,0.1);"
-            ></iframe>
-            <p style="color:#666; font-size:0.9rem; margin-top:0.5rem;">Vista previa del póster (proporción 3:4)</p>
-        </div>
-        """
-        st.markdown(pdf_display, unsafe_allow_html=True)
-    else:
-        st.warning("⚠️ El archivo PDF no está disponible en este momento.")
-
-elif seccion == "📧 Contacto":
     st.markdown("### 📧 Contacto")
 
     st.markdown("""
@@ -224,11 +157,14 @@ elif seccion == "📧 Contacto":
     [https://healthtracker.ai/](https://healthtracker.ai/)
     """)
 
+    
     st.markdown("---")
     st.markdown("### 📝 Formulario de Contacto")
 
     with st.form("contact_form"):
         nombre = st.text_input("👤 Nombre completo *")
+        institucion = st.text_input("🏢 Institución / Empresa *")
+        cargo = st.text_input("💼 Cargo / Profesión *")
         email = st.text_input("📧 Email *")
         asunto = st.selectbox(
             "📋 Motivo de contacto *",
@@ -241,6 +177,11 @@ elif seccion == "📧 Contacto":
             ]
         )
         mensaje = st.text_area("💬 Mensaje *", height=150)
+        
+        aceptar = st.checkbox(
+            "✅ Acepto que el equipo de Healthtracker Analytics se comunique conmigo por correo electrónico"
+        )
+
         col1, col2 = st.columns(2)
         with col1:
             submitted = st.form_submit_button("📤 Enviar Mensaje", use_container_width=True)
@@ -251,15 +192,35 @@ elif seccion == "📧 Contacto":
     if submitted:
         if not nombre or not email or not asunto or not mensaje:
             st.error("❌ Todos los campos son obligatorios.")
+        elif not aceptar:
+            st.warning("⚠️ Debes aceptar el envío de correos para poder continuar.")
         else:
             with st.spinner("📤 Enviando mensaje..."):
-                success, msg = enviar_correo(nombre, email, asunto, mensaje, "Extracción de Correos IA CCPP")
+                success, msg = enviar_correo(nombre, email, asunto, mensaje, institucion, cargo, "Gestión de Inasistencias IA CCPP")
+                
+                # Enviar correo simple con saludo de luz.ia y el enlace
+                cuerpo_html = f"""
+                <p>Hola,</p>
+                <p>Espero que te encuentres bien. Te comparto el enlace de referencia:</p>
+                <br>
+                <p><a href="https://drive.google.com/file/d/1w5HsZC4d8MslJu3zQUoxKpe37eK5fiPZ/view?usp=drive_link">Ver documento en Drive</a></p>
+                <br>
+                <p>Saludos,<br>Luz.IA</p>
+                """
+                correo_simple(
+                    asunto="Enlace de referencia - Gestión de Inasistencias IA",
+                    cuerpo_html=cuerpo_html,
+                    destinatarios=[email]
+                )
+                
             if success:
                 st.success("✅ " + msg)
                 st.info("📧 Tu mensaje ha sido enviado. Te contactaremos pronto.")
                 st.balloons()
             else:
                 st.error("❌ " + msg)
+
+
 
 st.markdown("---")
 st.markdown("""

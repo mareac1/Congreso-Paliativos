@@ -22,8 +22,7 @@ EMAIL_CONFIG = {
     'smtp_port': 587,
     'destinatarios': ['g.rojas@healthtracker.ai']
 }
-
-def enviar_correo(nombre, email, asunto, mensaje, origen_pagina="Agendamiento Automatizado IA CCPP"):
+def enviar_correo(nombre, email, asunto, mensaje, institucion, cargo, origen_pagina="Pacientes Críticos RFM CCPP"):
     """Envía correos electrónicos usando SMTP."""
     try:
         msg = MIMEMultipart()
@@ -41,6 +40,12 @@ def enviar_correo(nombre, email, asunto, mensaje, origen_pagina="Agendamiento Au
         MENSAJE:
         {mensaje}
 
+        INSTITUCIÓN:
+        {institucion}
+
+        CARGO:
+        {cargo}
+
         ---
         Enviado desde: {origen_pagina}
         Fecha: {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}
@@ -56,7 +61,36 @@ def enviar_correo(nombre, email, asunto, mensaje, origen_pagina="Agendamiento Au
         return True, "Correo enviado exitosamente"
     except Exception as e:
         return False, f"Error al enviar correo: {str(e)}"
+def correo_simple(asunto, cuerpo_html, destinatarios):
+    remitente = 'luz.ia@healthtracker.ai'
+    pass_remitente = 'zumt uxtw tmkm gdjk'
+    
+    sesion_smtp = smtplib.SMTP(host='smtp.gmail.com', port=587)
+    sesion_smtp.ehlo()
+    sesion_smtp.starttls()
+    sesion_smtp.login(remitente, pass_remitente)
 
+
+    mensaje = MIMEMultipart('mixed')
+    mensaje['From'] = remitente
+    mensaje['To'] = ", ".join(destinatarios)
+    mensaje['Subject'] = asunto
+
+    cuerpo_completo = f"""
+    <html>
+    <body>
+        {cuerpo_html}
+        <br><br>
+    </body>
+    </html>
+    """
+
+    mensaje.attach(MIMEText(cuerpo_completo, 'html'))
+
+    # Enviar correo
+    sesion_smtp.sendmail(remitente, destinatarios, mensaje.as_string())
+    print('📨 Correo enviado')
+    sesion_smtp.quit()
 # Configuración de la página
 st.set_page_config(
     page_title="Agendamiento automatizado de visitas para cuidados paliativos",
@@ -85,12 +119,7 @@ st.sidebar.title("🧭 Navegación")
 seccion = st.sidebar.radio(
     "Selecciona una sección:",
     [
-        "📋 Resumen de la Investigación",
-        "🎯 Objetivo y Desarrollo",
-        "📊 Resultados",
-        "💡 Conclusiones",
-        "📥 Descargas",
-        "📧 Contacto"
+        "📋 Resumen de la Investigación"
     ]
 )
 
@@ -120,105 +149,6 @@ if seccion == "📋 Resumen de la Investigación":
         </div>
         """, unsafe_allow_html=True)
 
-elif seccion == "🎯 Objetivo y Desarrollo":
-    st.markdown("### 🎯 Objetivo y Desarrollo de la Experiencia")
-
-    st.markdown("""
-    #### 🎯 Objetivo
-    Desarrollar e implementar un **sistema automatizado de agendamiento** que combine criterios clínicos y administrativos, 
-    garantizando la compatibilidad entre **necesidades de los pacientes** y **cobertura del equipo profesional**, 
-    optimizando tiempos y recursos en la gestión asistencial.
-
-    #### 🧩 Desarrollo
-    - Se diseñó una **estrategia de gestión clínica** que combina estabilidad del paciente, necesidades especializadas, 
-      soporte familiar y grado de dependencia.  
-    - Con base en estos perfiles se definieron **frecuencias de visita** que, junto con los criterios administrativos, 
-      permiten mantener la compatibilidad entre **demanda y cobertura**.  
-    - El sistema híbrido combina **visitas programadas y por demanda**, revisando activamente el cumplimiento y 
-      **reprogramando** cuando es necesario.  
-    - Implementación gradual desde **2022**, con progresiva automatización y consolidación de procesos.
-    """)
-
-elif seccion == "📊 Resultados":
-    st.markdown("### 📊 Resultados Principales")
-
-    col1, col2 = st.columns([3, 2])
-    with col1:
-        st.markdown("""
-        #### 📈 Principales hallazgos
-        - La automatización alcanzó un promedio del **70%** de las atenciones durante 2025.  
-        - En **agosto 2025** el sistema logró **90% de automatización**.  
-        - El tiempo promedio de gestión por atención se redujo de **90 segundos (manual)** 
-          a **1 segundo (automático)**.  
-        - Se fortaleció la coordinación con especialistas mediante un protocolo de revisión eficiente.  
-        """)
-    with col2:
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, #11998e, #38ef7d);
-                    padding: 2rem; border-radius: 15px; color: white; text-align: center;">
-            <h3>🎯 Resultados Clave</h3>
-            <hr style="border-color:white;">
-            <h4>⚙️ 90% automatización alcanzada</h4>
-            <h4>⏱️ Reducción de 90s → 1s por atención</h4>
-            <h4>📅 Reprogramación inteligente</h4>
-            <h4>👥 Coordinación clínica optimizada</h4>
-        </div>
-        """, unsafe_allow_html=True)
-
-elif seccion == "💡 Conclusiones":
-    st.markdown("### 💡 Conclusiones")
-
-    st.markdown("""
-    - La implementación de un sistema de **agendamiento automatizado** permite equilibrar de forma eficiente las 
-      **necesidades asistenciales** con la disponibilidad de recursos.  
-    - Es altamente recomendable en contextos de **salud mixta**, como el chileno, por su capacidad de respuesta ágil.  
-    - La capacitación de los equipos en **herramientas digitales y criterios estandarizados** es clave para sostener la calidad.  
-    - La estrategia optimiza recursos y **potencia la equidad, calidad y humanización** de la atención paliativa.  
-    """)
-
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, #56ab2f, #a8e6cf);
-                padding: 1.5rem; border-radius: 15px; color: white; text-align: center;">
-        <h3>🏆 Conclusión General</h3>
-        <p>El agendamiento automatizado fortalece la eficiencia, equidad y calidad de la atención paliativa, 
-        permitiendo un uso más humano y estratégico del tiempo de los profesionales.</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-elif seccion == "📥 Descargas":
-    st.markdown("### 📥 Descarga y Vista Previa del Póster")
-
-    file_path = os.path.join(parent_dir, "assets", "[THOMAS SCHADE] 1 - Congreso Cuidados Paliativos 2025 T21.pptx.pdf")
-    if os.path.exists(file_path):
-        with open(file_path, "rb") as pdf_file:
-            pdf_data = pdf_file.read()
-        st.download_button(
-            label="📄 Descargar Póster (PDF)",
-            data=pdf_data,
-            file_name="Agendamiento_IA.pdf",
-            mime="application/pdf",
-            use_container_width=True
-        )
-
-        # Vista previa en proporción 3:4 (vertical)
-        with open(file_path, "rb") as f:
-            base64_pdf = base64.b64encode(f.read()).decode('utf-8')
-        pdf_display = f"""
-        <div style="text-align:center; margin-top:1rem;">
-            <iframe 
-                src="data:application/pdf;base64,{base64_pdf}" 
-                width="100%" 
-                height="1200px" 
-                style="border:none; border-radius:12px; box-shadow:0 0 10px rgba(0,0,0,0.1);"
-            ></iframe>
-            <p style="color:#666; font-size:0.9rem; margin-top:0.5rem;">Vista previa del póster (proporción 3:4)</p>
-        </div>
-        """
-        st.markdown(pdf_display, unsafe_allow_html=True)
-    else:
-        st.warning("⚠️ El archivo PDF no está disponible en este momento.")
-
-elif seccion == "📧 Contacto":
     st.markdown("### 📧 Contacto")
 
     st.markdown("""
@@ -235,6 +165,8 @@ elif seccion == "📧 Contacto":
 
     with st.form("contact_form"):
         nombre = st.text_input("👤 Nombre completo *")
+        institucion = st.text_input("🏢 Institución / Empresa *")
+        cargo = st.text_input("💼 Cargo / Profesión *")
         email = st.text_input("📧 Email *")
         asunto = st.selectbox(
             "📋 Motivo de contacto *",
@@ -247,6 +179,11 @@ elif seccion == "📧 Contacto":
             ]
         )
         mensaje = st.text_area("💬 Mensaje *", height=150)
+        
+        aceptar = st.checkbox(
+            "✅ Acepto que el equipo de Healthtracker Analytics se comunique conmigo por correo electrónico"
+        )
+
         col1, col2 = st.columns(2)
         with col1:
             submitted = st.form_submit_button("📤 Enviar Mensaje", use_container_width=True)
@@ -257,9 +194,27 @@ elif seccion == "📧 Contacto":
     if submitted:
         if not nombre or not email or not asunto or not mensaje:
             st.error("❌ Todos los campos son obligatorios.")
+        elif not aceptar:
+            st.warning("⚠️ Debes aceptar el envío de correos para poder continuar.")
         else:
             with st.spinner("📤 Enviando mensaje..."):
-                success, msg = enviar_correo(nombre, email, asunto, mensaje, "Agendamiento Automatizado IA CCPP")
+                success, msg = enviar_correo(nombre, email, asunto, mensaje, institucion, cargo, "Gestión de Inasistencias IA CCPP")
+                
+                # Enviar correo simple con saludo de luz.ia y el enlace
+                cuerpo_html = f"""
+                <p>Hola,</p>
+                <p>Espero que te encuentres bien. Te comparto el enlace de referencia:</p>
+                <br>
+                <p><a href="https://drive.google.com/file/d/17qfudi4GpbRsX2gh_b6UeA7c37pfhHYc/view?usp=drive_link">Ver documento en Drive</a></p>
+                <br>
+                <p>Saludos,<br>Luz.IA</p>
+                """
+                correo_simple(
+                    asunto="Enlace de referencia - Gestión de Inasistencias IA",
+                    cuerpo_html=cuerpo_html,
+                    destinatarios=[email]
+                )
+                
             if success:
                 st.success("✅ " + msg)
                 st.info("📧 Tu mensaje ha sido enviado. Te contactaremos pronto.")
@@ -267,6 +222,8 @@ elif seccion == "📧 Contacto":
             else:
                 st.error("❌ " + msg)
 
+
+    
 st.markdown("---")
 st.markdown("""
 <div style="text-align: center; color: #666; margin-top: 2rem;">

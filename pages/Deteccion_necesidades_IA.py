@@ -23,7 +23,7 @@ EMAIL_CONFIG = {
     'destinatarios': ['g.rojas@healthtracker.ai']
 }
 
-def enviar_correo(nombre, email, asunto, mensaje, origen_pagina="Detección Temprana de Necesidades Paliativas IA CCPP"):
+def enviar_correo(nombre, email, asunto, mensaje, institucion, cargo, origen_pagina="Pacientes Críticos RFM CCPP"):
     """Envía correos electrónicos usando SMTP."""
     try:
         msg = MIMEMultipart()
@@ -41,6 +41,12 @@ def enviar_correo(nombre, email, asunto, mensaje, origen_pagina="Detección Temp
         MENSAJE:
         {mensaje}
 
+        INSTITUCIÓN:
+        {institucion}
+
+        CARGO:
+        {cargo}
+
         ---
         Enviado desde: {origen_pagina}
         Fecha: {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}
@@ -56,6 +62,36 @@ def enviar_correo(nombre, email, asunto, mensaje, origen_pagina="Detección Temp
         return True, "Correo enviado exitosamente"
     except Exception as e:
         return False, f"Error al enviar correo: {str(e)}"
+def correo_simple(asunto, cuerpo_html, destinatarios):
+    remitente = 'luz.ia@healthtracker.ai'
+    pass_remitente = 'zumt uxtw tmkm gdjk'
+    
+    sesion_smtp = smtplib.SMTP(host='smtp.gmail.com', port=587)
+    sesion_smtp.ehlo()
+    sesion_smtp.starttls()
+    sesion_smtp.login(remitente, pass_remitente)
+
+
+    mensaje = MIMEMultipart('mixed')
+    mensaje['From'] = remitente
+    mensaje['To'] = ", ".join(destinatarios)
+    mensaje['Subject'] = asunto
+
+    cuerpo_completo = f"""
+    <html>
+    <body>
+        {cuerpo_html}
+        <br><br>
+    </body>
+    </html>
+    """
+
+    mensaje.attach(MIMEText(cuerpo_completo, 'html'))
+
+    # Enviar correo
+    sesion_smtp.sendmail(remitente, destinatarios, mensaje.as_string())
+    print('📨 Correo enviado')
+    sesion_smtp.quit()
 
 # Configuración de la página
 st.set_page_config(
@@ -85,12 +121,7 @@ st.sidebar.title("🧭 Navegación")
 seccion = st.sidebar.radio(
     "Selecciona una sección:",
     [
-        "📋 Resumen de la Investigación",
-        "🎯 Objetivo y Desarrollo",
-        "📊 Resultados",
-        "💡 Conclusiones",
-        "📥 Descargas",
-        "📧 Contacto"
+        "📋 Resumen de la Investigación"
     ]
 )
 
@@ -121,105 +152,6 @@ if seccion == "📋 Resumen de la Investigación":
         </div>
         """, unsafe_allow_html=True)
 
-elif seccion == "🎯 Objetivo y Desarrollo":
-    st.markdown("### 🎯 Objetivo y Desarrollo de la Experiencia")
-
-    st.markdown("""
-    #### 🎯 Objetivo
-    Desarrollar y pilotar una **herramienta de apoyo clínico** que identifique automáticamente, 
-    a partir de informes de comité oncológico, la indicación o señales de riesgo que justifiquen 
-    una derivación temprana a cuidados paliativos.
-
-    #### 🧩 Desarrollo
-    - Se analizaron informes clínicos de comités oncológicos, previamente anonimizados, mediante **modelos de lenguaje avanzado (Gemini 2.0 Flash)**.  
-    - El sistema fue entrenado para detectar **12 criterios clínicos** definidos por expertos (síntomas severos, metástasis cerebrales, crisis existencial, cáncer avanzado, etc.).  
-    - Los casos detectados son derivados a una **bandeja digital** donde el equipo de enfermería valida y coordina la derivación médica.  
-    - Este flujo incorpora validación humana (*human-in-the-loop*) que garantiza control clínico, corrección de errores y retroalimentación continua al modelo.
-    """)
-
-elif seccion == "📊 Resultados":
-    st.markdown("### 📊 Resultados Principales")
-
-    col1, col2 = st.columns([3, 2])
-    with col1:
-        st.markdown("""
-        #### 📈 Resultados Preliminares
-        - **4.099 informes clínicos** procesados.  
-        - **821 casos (20.0%)** con posible necesidad de cuidados paliativos.  
-        - Promedio de **1.3 criterios detectados por caso**:
-            - 472 casos (11.5%): 1 criterio  
-            - 270 casos (6.5%): 2 criterios  
-            - 60 casos (1.4%): 3–5 criterios  
-        - Alta concordancia entre el modelo de IA y el juicio experto.  
-        - Reducción del tiempo de revisión y generación de alertas útiles para gestión de pacientes.
-        """)
-    with col2:
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, #11998e, #38ef7d);
-                    padding: 2rem; border-radius: 15px; color: white; text-align: center;">
-            <h3>🎯 Resultados Clave</h3>
-            <hr style="border-color:white;">
-            <h4>🤖 12 criterios clínicos definidos</h4>
-            <h4>📈 20% de pacientes con señales tempranas</h4>
-            <h4>💬 Validación “human-in-the-loop”</h4>
-            <h4>⏱️ Reducción de tiempo de revisión</h4>
-        </div>
-        """, unsafe_allow_html=True)
-
-elif seccion == "💡 Conclusiones":
-    st.markdown("### 💡 Conclusiones")
-
-    st.markdown("""
-    - La combinación de **IA generativa y validación profesional** permite identificar precozmente 
-      necesidades de cuidados paliativos.  
-    - Este modelo contribuye a la **equidad en el acceso** y mejora la continuidad del cuidado clínico.  
-    - Favorece la toma de decisiones informadas y la **optimización del flujo asistencial**.  
-    - La estrategia es **escalable y transferible** a distintos niveles de atención.  
-    """)
-
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, #56ab2f, #a8e6cf);
-                padding: 1.5rem; border-radius: 15px; color: white; text-align: center;">
-        <h3>🏆 Conclusión General</h3>
-        <p>Integrar IA en la detección temprana de necesidades paliativas mejora la oportunidad de atención,
-        reduce la carga administrativa y fortalece la toma de decisiones clínicas basadas en datos.</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-elif seccion == "📥 Descargas":
-    st.markdown("### 📥 Descarga y Vista Previa del Póster")
-
-    file_path = os.path.join(parent_dir, "assets", "[JAIME JIMENEZ] 1 - Congreso Cuidados Paliativos - T18.pptx.pdf")
-    if os.path.exists(file_path):
-        with open(file_path, "rb") as pdf_file:
-            pdf_data = pdf_file.read()
-        st.download_button(
-            label="📄 Descargar Póster (PDF)",
-            data=pdf_data,
-            file_name="Deteccion_necesidades_IA.pdf",
-            mime="application/pdf",
-            use_container_width=True
-        )
-
-        # Vista previa en proporción 3:4
-        with open(file_path, "rb") as f:
-            base64_pdf = base64.b64encode(f.read()).decode('utf-8')
-        pdf_display = f"""
-        <div style="text-align:center; margin-top:1rem;">
-            <iframe 
-                src="data:application/pdf;base64,{base64_pdf}" 
-                width="100%" 
-                height="1200px" 
-                style="border:none; border-radius:12px; box-shadow:0 0 10px rgba(0,0,0,0.1);"
-            ></iframe>
-            <p style="color:#666; font-size:0.9rem; margin-top:0.5rem;">Vista previa del póster (proporción 3:4)</p>
-        </div>
-        """
-        st.markdown(pdf_display, unsafe_allow_html=True)
-    else:
-        st.warning("⚠️ El archivo PDF no está disponible en este momento.")
-
-elif seccion == "📧 Contacto":
     st.markdown("### 📧 Contacto")
 
     st.markdown("""
@@ -235,6 +167,8 @@ elif seccion == "📧 Contacto":
 
     with st.form("contact_form"):
         nombre = st.text_input("👤 Nombre completo *")
+        institucion = st.text_input("🏢 Institución / Empresa *")
+        cargo = st.text_input("💼 Cargo / Profesión *")
         email = st.text_input("📧 Email *")
         asunto = st.selectbox(
             "📋 Motivo de contacto *",
@@ -247,6 +181,11 @@ elif seccion == "📧 Contacto":
             ]
         )
         mensaje = st.text_area("💬 Mensaje *", height=150)
+        
+        aceptar = st.checkbox(
+            "✅ Acepto que el equipo de Healthtracker Analytics se comunique conmigo por correo electrónico"
+        )
+
         col1, col2 = st.columns(2)
         with col1:
             submitted = st.form_submit_button("📤 Enviar Mensaje", use_container_width=True)
@@ -257,16 +196,34 @@ elif seccion == "📧 Contacto":
     if submitted:
         if not nombre or not email or not asunto or not mensaje:
             st.error("❌ Todos los campos son obligatorios.")
+        elif not aceptar:
+            st.warning("⚠️ Debes aceptar el envío de correos para poder continuar.")
         else:
             with st.spinner("📤 Enviando mensaje..."):
-                success, msg = enviar_correo(nombre, email, asunto, mensaje, "Detección Temprana de Necesidades Paliativas IA CCPP")
+                success, msg = enviar_correo(nombre, email, asunto, mensaje, institucion, cargo, "Gestión de Inasistencias IA CCPP")
+                
+                # Enviar correo simple con saludo de luz.ia y el enlace
+                cuerpo_html = f"""
+                <p>Hola,</p>
+                <p>Espero que te encuentres bien. Te comparto el enlace de referencia:</p>
+                <br>
+                <p><a href="https://drive.google.com/file/d/1MRbWRa2c7cL_1I6IbsY_ZprYFezC9ezs/view?usp=drive_link">Ver documento en Drive</a></p>
+                <br>
+                <p>Saludos,<br>Luz.IA</p>
+                """
+                correo_simple(
+                    asunto="Enlace de referencia - Gestión de Inasistencias IA",
+                    cuerpo_html=cuerpo_html,
+                    destinatarios=[email]
+                )
+                
             if success:
                 st.success("✅ " + msg)
                 st.info("📧 Tu mensaje ha sido enviado. Te contactaremos pronto.")
                 st.balloons()
             else:
                 st.error("❌ " + msg)
-
+    
 st.markdown("---")
 st.markdown("""
 <div style="text-align: center; color: #666; margin-top: 2rem;">

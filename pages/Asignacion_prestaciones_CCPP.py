@@ -23,8 +23,8 @@ EMAIL_CONFIG = {
     'destinatarios': ['g.rojas@healthtracker.ai']
 }
 
-def enviar_correo(nombre, email, asunto, mensaje, origen_pagina="Asignación Automática de Prestaciones IA CCPP"):
-    """Función para enviar correos electrónicos usando SMTP"""
+def enviar_correo(nombre, email, asunto, mensaje, institucion, cargo, origen_pagina="Pacientes Críticos RFM CCPP"):
+    """Envía correos electrónicos usando SMTP."""
     try:
         msg = MIMEMultipart()
         msg['From'] = EMAIL_CONFIG['remitente']
@@ -41,23 +41,57 @@ def enviar_correo(nombre, email, asunto, mensaje, origen_pagina="Asignación Aut
         MENSAJE:
         {mensaje}
 
+        INSTITUCIÓN:
+        {institucion}
+
+        CARGO:
+        {cargo}
+
         ---
         Enviado desde: {origen_pagina}
         Fecha: {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}
         """
 
         msg.attach(MIMEText(body, 'plain', 'utf-8'))
-        sesion_smtp = smtplib.SMTP(EMAIL_CONFIG['smtp_server'], EMAIL_CONFIG['smtp_port'])
-        sesion_smtp.starttls()
-        sesion_smtp.login(EMAIL_CONFIG['remitente'], EMAIL_CONFIG['pass_remitente'])
-        sesion_smtp.sendmail(EMAIL_CONFIG['remitente'], EMAIL_CONFIG['destinatarios'], msg.as_string())
-        sesion_smtp.quit()
+        smtp = smtplib.SMTP(EMAIL_CONFIG['smtp_server'], EMAIL_CONFIG['smtp_port'])
+        smtp.starttls()
+        smtp.login(EMAIL_CONFIG['remitente'], EMAIL_CONFIG['pass_remitente'])
+        smtp.sendmail(EMAIL_CONFIG['remitente'], EMAIL_CONFIG['destinatarios'], msg.as_string())
+        smtp.quit()
 
         return True, "Correo enviado exitosamente"
     except Exception as e:
         return False, f"Error al enviar correo: {str(e)}"
+def correo_simple(asunto, cuerpo_html, destinatarios):
+    remitente = 'luz.ia@healthtracker.ai'
+    pass_remitente = 'zumt uxtw tmkm gdjk'
+    
+    sesion_smtp = smtplib.SMTP(host='smtp.gmail.com', port=587)
+    sesion_smtp.ehlo()
+    sesion_smtp.starttls()
+    sesion_smtp.login(remitente, pass_remitente)
 
 
+    mensaje = MIMEMultipart('mixed')
+    mensaje['From'] = remitente
+    mensaje['To'] = ", ".join(destinatarios)
+    mensaje['Subject'] = asunto
+
+    cuerpo_completo = f"""
+    <html>
+    <body>
+        {cuerpo_html}
+        <br><br>
+    </body>
+    </html>
+    """
+
+    mensaje.attach(MIMEText(cuerpo_completo, 'html'))
+
+    # Enviar correo
+    sesion_smtp.sendmail(remitente, destinatarios, mensaje.as_string())
+    print('📨 Correo enviado')
+    sesion_smtp.quit()
 # Configuración de la página
 st.set_page_config(
     page_title="Asignación automática de prestaciones en pacientes paliativos",
@@ -86,12 +120,7 @@ st.sidebar.title("🧭 Navegación")
 seccion = st.sidebar.radio(
     "Selecciona una sección:",
     [
-        "📋 Resumen de la Investigación",
-        "🎯 Objetivo y Desarrollo",
-        "📊 Resultados",
-        "💡 Conclusiones",
-        "📥 Descargas",
-        "📧 Contacto"
+        "📋 Resumen de la Investigación"
     ]
 )
 
@@ -119,111 +148,6 @@ if seccion == "📋 Resumen de la Investigación":
         </div>
         """, unsafe_allow_html=True)
 
-elif seccion == "🎯 Objetivo y Desarrollo":
-    st.markdown("### 🎯 Objetivo y Desarrollo de la Experiencia")
-
-    st.markdown("""
-    #### 🎯 Objetivo
-    Desarrollar e implementar un **sistema automatizado con inteligencia artificial** capaz de analizar informes médicos domiciliarios y asignar automáticamente el **paquete de prestaciones** según la complejidad del paciente, optimizando la gestión clínica y administrativa en cuidados paliativos domiciliarios.
-
-    #### 🧩 Desarrollo
-    1. **Extracción de datos:** identificación de variables clínicas clave, como estado funcional (ECOG), nivel de dolor (EVA), frecuencia de visitas y procedimientos requeridos.  
-    2. **Procesamiento con IA:** los datos son comparados con criterios institucionales definidos para proponer automáticamente el paquete correspondiente.  
-    3. **Integración administrativa:** los resultados son enviados a una bandeja de revisión, donde el equipo clínico valida, ajusta o aprueba la clasificación.  
-    4. **Validación humana:** retroalimentación del equipo clínico para ajustar precisión y confiabilidad del modelo.
-    """)
-
-elif seccion == "📊 Resultados":
-    st.markdown("### 📊 Resultados Principales")
-
-    col1, col2 = st.columns([3, 2])
-    with col1:
-        st.markdown("""
-        #### 📈 Resultados Destacados
-        - Validación clínica del sistema en **93.8%** de los casos.  
-        - Concordancia automática de **59%** entre IA y clasificación profesional.  
-        - Reducción significativa de **tiempos de revisión y asignación**.  
-        - Estandarización del proceso administrativo y clínico.  
-        - Mejora en la **trazabilidad** de los casos revisados y en la **consistencia** de criterios.
-        """)
-    with col2:
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, #42275a, #734b6d);
-                    padding: 2rem; border-radius: 15px; color: white; text-align: center;">
-            <h3>🎯 Resultados Clave</h3>
-            <hr style="border-color:white;">
-            <h4>✅ 93.8% validación clínica</h4>
-            <h4>🤝 59% concordancia automática</h4>
-            <h4>🕒 Reducción de tiempos de revisión</h4>
-            <h4>📋 Proceso estandarizado</h4>
-        </div>
-        """, unsafe_allow_html=True)
-
-elif seccion == "💡 Conclusiones":
-    st.markdown("### 💡 Conclusiones")
-
-    st.markdown("""
-    La incorporación de inteligencia artificial en la **asignación de paquetes de prestaciones** en cuidados paliativos domiciliarios:
-    - **Reduce tiempos administrativos.**  
-    - **Estandariza criterios clínicos.**  
-    - **Mejora la coherencia** en la clasificación de pacientes.  
-    - **Complementa la valoración profesional**, fortaleciendo la gestión integral del cuidado.
-
-    El modelo se presenta como una herramienta **eficiente, escalable y replicable**, aplicable a otros contextos clínicos.
-    """)
-
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, #56ab2f, #a8e6cf);
-                padding: 1.5rem; border-radius: 15px; color: white; text-align: center;">
-        <h3>🏆 Conclusión General</h3>
-        <p>La automatización mediante IA mejora la eficiencia y estandarización en la gestión clínica, integrándose como soporte estratégico a la toma de decisiones en cuidados paliativos.</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-elif seccion == "📥 Descargas":
-    st.markdown("### 📥 Descarga del Póster Completo")
-
-    col1, col2 = st.columns([2, 1])
-    with col1:
-        file_path = os.path.join(parent_dir, "assets", "[GONZALO ROJAS] 2 - Congreso Cuidados Paliativos 2025 T17.pptx.pdf")
-        if os.path.exists(file_path):
-            with open(file_path, "rb") as pdf_file:
-                pdf_data = pdf_file.read()
-            st.download_button(
-                label="📄 Descargar Póster (PDF)",
-                data=pdf_data,
-                file_name="Asignacion_prestaciones_CCPP.pdf",
-                mime="application/pdf",
-                use_container_width=True
-            )
-        else:
-            st.warning("⚠️ El archivo PDF no está disponible en este momento.")
-    with col2:
-        st.markdown("#### 📱 Código QR")
-        qr = generate_qr_code("https://healthtracker.ai/")
-        st.image(qr, width=200)
-        st.markdown("<p style='text-align:center;'>Escanea para más información</p>", unsafe_allow_html=True)
-    # Vista previa del PDF
-    # Mostrar vista previa del PDF en proporción 3:4 (vertical)
-    if os.path.exists(file_path):
-        with open(file_path, "rb") as f:
-            base64_pdf = base64.b64encode(f.read()).decode('utf-8')
-
-        pdf_display = f"""
-        <div style="text-align:center; margin-top:1rem;">
-            <iframe 
-                src="data:application/pdf;base64,{base64_pdf}" 
-                width="100%" 
-                height="1200px" 
-                style="border:none; border-radius:12px; box-shadow:0 0 10px rgba(0,0,0,0.1);"
-            ></iframe>
-            <p style="color:#666; font-size:0.9rem; margin-top:0.5rem;">Vista previa del póster (3401×4534 px)</p>
-        </div>
-        """
-        st.markdown(pdf_display, unsafe_allow_html=True)
-    else:
-        st.warning("⚠️ No se encontró el archivo PDF para previsualizar.")
-elif seccion == "📧 Contacto":
     st.markdown("### 📧 Contacto")
 
     st.markdown("""
@@ -238,6 +162,8 @@ elif seccion == "📧 Contacto":
 
     with st.form("contact_form"):
         nombre = st.text_input("👤 Nombre completo *")
+        institucion = st.text_input("🏢 Institución / Empresa *")
+        cargo = st.text_input("💼 Cargo / Profesión *")
         email = st.text_input("📧 Email *")
         asunto = st.selectbox(
             "📋 Motivo de contacto *",
@@ -250,6 +176,11 @@ elif seccion == "📧 Contacto":
             ]
         )
         mensaje = st.text_area("💬 Mensaje *", height=150)
+        
+        aceptar = st.checkbox(
+            "✅ Acepto que el equipo de Healthtracker Analytics se comunique conmigo por correo electrónico"
+        )
+
         col1, col2 = st.columns(2)
         with col1:
             submitted = st.form_submit_button("📤 Enviar Mensaje", use_container_width=True)
@@ -260,15 +191,34 @@ elif seccion == "📧 Contacto":
     if submitted:
         if not nombre or not email or not asunto or not mensaje:
             st.error("❌ Todos los campos son obligatorios.")
+        elif not aceptar:
+            st.warning("⚠️ Debes aceptar el envío de correos para poder continuar.")
         else:
             with st.spinner("📤 Enviando mensaje..."):
-                success, msg = enviar_correo(nombre, email, asunto, mensaje, "Asignación Automática de Prestaciones IA CCPP")
+                success, msg = enviar_correo(nombre, email, asunto, mensaje, institucion, cargo, "Gestión de Inasistencias IA CCPP")
+                
+                # Enviar correo simple con saludo de luz.ia y el enlace
+                cuerpo_html = f"""
+                <p>Hola,</p>
+                <p>Espero que te encuentres bien. Te comparto el enlace de referencia:</p>
+                <br>
+                <p><a href="https://drive.google.com/file/d/14Fc8RzWAuiup5RkCxhFYhojzPlR_JWcT/view?usp=drive_link">Ver documento en Drive</a></p>
+                <br>
+                <p>Saludos,<br>Luz.IA</p>
+                """
+                correo_simple(
+                    asunto="Enlace de referencia - Gestión de Inasistencias IA",
+                    cuerpo_html=cuerpo_html,
+                    destinatarios=[email]
+                )
+                
             if success:
                 st.success("✅ " + msg)
                 st.info("📧 Tu mensaje ha sido enviado. Te contactaremos pronto.")
                 st.balloons()
             else:
                 st.error("❌ " + msg)
+
 
 st.markdown("---")
 st.markdown("""

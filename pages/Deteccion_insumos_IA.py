@@ -22,8 +22,9 @@ EMAIL_CONFIG = {
     'destinatarios': ['g.rojas@healthtracker.ai']
 }
 
-def enviar_correo(nombre, email, asunto, mensaje, origen_pagina="Detección Temprana de Insumos IA CCPP"):
-    """Función para enviar correos electrónicos usando SMTP"""
+
+def enviar_correo(nombre, email, asunto, mensaje, institucion, cargo, origen_pagina="Pacientes Críticos RFM CCPP"):
+    """Envía correos electrónicos usando SMTP."""
     try:
         msg = MIMEMultipart()
         msg['From'] = EMAIL_CONFIG['remitente']
@@ -40,23 +41,57 @@ def enviar_correo(nombre, email, asunto, mensaje, origen_pagina="Detección Temp
         MENSAJE:
         {mensaje}
 
+        INSTITUCIÓN:
+        {institucion}
+
+        CARGO:
+        {cargo}
+
         ---
         Enviado desde: {origen_pagina}
         Fecha: {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}
         """
 
         msg.attach(MIMEText(body, 'plain', 'utf-8'))
-        sesion_smtp = smtplib.SMTP(EMAIL_CONFIG['smtp_server'], EMAIL_CONFIG['smtp_port'])
-        sesion_smtp.starttls()
-        sesion_smtp.login(EMAIL_CONFIG['remitente'], EMAIL_CONFIG['pass_remitente'])
-        sesion_smtp.sendmail(EMAIL_CONFIG['remitente'], EMAIL_CONFIG['destinatarios'], msg.as_string())
-        sesion_smtp.quit()
+        smtp = smtplib.SMTP(EMAIL_CONFIG['smtp_server'], EMAIL_CONFIG['smtp_port'])
+        smtp.starttls()
+        smtp.login(EMAIL_CONFIG['remitente'], EMAIL_CONFIG['pass_remitente'])
+        smtp.sendmail(EMAIL_CONFIG['remitente'], EMAIL_CONFIG['destinatarios'], msg.as_string())
+        smtp.quit()
 
         return True, "Correo enviado exitosamente"
     except Exception as e:
         return False, f"Error al enviar correo: {str(e)}"
+def correo_simple(asunto, cuerpo_html, destinatarios):
+    remitente = 'luz.ia@healthtracker.ai'
+    pass_remitente = 'zumt uxtw tmkm gdjk'
+    
+    sesion_smtp = smtplib.SMTP(host='smtp.gmail.com', port=587)
+    sesion_smtp.ehlo()
+    sesion_smtp.starttls()
+    sesion_smtp.login(remitente, pass_remitente)
 
 
+    mensaje = MIMEMultipart('mixed')
+    mensaje['From'] = remitente
+    mensaje['To'] = ", ".join(destinatarios)
+    mensaje['Subject'] = asunto
+
+    cuerpo_completo = f"""
+    <html>
+    <body>
+        {cuerpo_html}
+        <br><br>
+    </body>
+    </html>
+    """
+
+    mensaje.attach(MIMEText(cuerpo_completo, 'html'))
+
+    # Enviar correo
+    sesion_smtp.sendmail(remitente, destinatarios, mensaje.as_string())
+    print('📨 Correo enviado')
+    sesion_smtp.quit()
 # Configuración de la página
 st.set_page_config(
     page_title="Sistema automatizado con IA para detección temprana de necesidad de insumos",
@@ -85,12 +120,7 @@ st.sidebar.title("🧭 Navegación")
 seccion = st.sidebar.radio(
     "Selecciona una sección:",
     [
-        "📋 Resumen de la Investigación",
-        "🎯 Objetivo y Desarrollo",
-        "📊 Resultados",
-        "💡 Conclusiones",
-        "📥 Descargas",
-        "📧 Contacto"
+        "📋 Resumen de la Investigación"
     ]
 )
 
@@ -119,90 +149,6 @@ if seccion == "📋 Resumen de la Investigación":
         </div>
         """, unsafe_allow_html=True)
 
-elif seccion == "🎯 Objetivo y Desarrollo":
-    st.markdown("### 🎯 Objetivo y Desarrollo de la Experiencia")
-
-    st.markdown("""
-    #### 🎯 Objetivo
-    Desarrollar e implementar un **sistema automatizado basado en inteligencia artificial** que permita detectar de manera temprana la necesidad de insumos clínicos en pacientes en cuidados paliativos domiciliarios, mediante el análisis estructurado de **registros de enfermería**, con el fin de **anticipar requerimientos**, **optimizar procesos de despacho** y **mejorar la continuidad del cuidado**.
-
-    #### 🧩 Desarrollo
-    1. **Extracción de datos:** identificación y estructuración de campos relevantes en los informes clínicos (síntomas, procedimientos, observaciones).
-    2. **Procesamiento con IA:** análisis de textos con modelos de lenguaje natural (NLP) para detectar patrones de necesidad de insumos (apósitos, hidratación, material subcutáneo, etc.).
-    3. **Envío a bandeja administrativa:** registros con alta probabilidad de requerir insumos son derivados automáticamente al equipo encargado para revisión y despacho.
-    4. **Retroalimentación:** evaluación clínica de las detecciones y ajustes continuos para mejorar precisión.
-    """)
-
-elif seccion == "📊 Resultados":
-    st.markdown("### 📊 Resultados Principales")
-
-    col1, col2 = st.columns([3, 2])
-    with col1:
-        st.markdown("""
-        #### 📈 Resultados Destacados
-        - El sistema identificó necesidad potencial de insumos en el **48%** de los registros analizados.
-        - El **4%** de los casos detectados fueron validados y despachados efectivamente.
-        - Se observó un **alto número de falsos positivos**, lo cual permitió **priorizar revisión** de registros críticos.
-        - La integración con la bandeja administrativa **redujo los tiempos de respuesta** y **mejoró la trazabilidad**.
-        """)
-    with col2:
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, #11998e, #38ef7d);
-                    padding: 2rem; border-radius: 15px; color: white; text-align: center;">
-            <h3>🎯 Resultados Clave</h3>
-            <hr style="border-color:white;">
-            <h4>🧠 48% con necesidad potencial</h4>
-            <h4>✅ 4% validados y despachados</h4>
-            <h4>📉 Reducción de tiempos de respuesta</h4>
-            <h4>📦 Mejora en trazabilidad y eficiencia</h4>
-        </div>
-        """, unsafe_allow_html=True)
-
-elif seccion == "💡 Conclusiones":
-    st.markdown("### 💡 Conclusiones")
-
-    st.markdown("""
-    La implementación del sistema automatizado con inteligencia artificial demostró que el análisis estructurado de los registros de enfermería permite **detectar tempranamente necesidades de insumos clínicos**.  
-    Esto se traduce en:
-    - **Optimización de la gestión de recursos.**
-    - **Reducción de tiempos de despacho.**
-    - **Fortalecimiento de la continuidad del cuidado.**
-    - **Consolidación de la trazabilidad operativa.**
-    """)
-
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, #56ab2f, #a8e6cf);
-                padding: 1.5rem; border-radius: 15px; color: white; text-align: center;">
-        <h3>🏆 Conclusión General</h3>
-        <p>El uso de IA en la gestión de insumos clínicos representa un avance concreto hacia la automatización y sostenibilidad de los cuidados paliativos domiciliarios.</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-elif seccion == "📥 Descargas":
-    st.markdown("### 📥 Descarga del Póster Completo")
-
-    col1, col2 = st.columns([2, 1])
-    with col1:
-        file_path = os.path.join(parent_dir, "assets", "[GONZALO ROJAS] 1 - Congreso Cuidados Paliativos 2025 T19.pptx.pdf")
-        if os.path.exists(file_path):
-            with open(file_path, "rb") as pdf_file:
-                pdf_data = pdf_file.read()
-            st.download_button(
-                label="📄 Descargar Póster (PDF)",
-                data=pdf_data,
-                file_name="Deteccion_temprana_insumos_IA.pdf",
-                mime="application/pdf",
-                use_container_width=True
-            )
-        else:
-            st.warning("⚠️ El archivo PDF no está disponible en este momento.")
-    with col2:
-        st.markdown("#### 📱 Código QR")
-        qr = generate_qr_code("https://healthtracker.ai/")
-        st.image(qr, width=200)
-        st.markdown("<p style='text-align:center;'>Escanea para más información</p>", unsafe_allow_html=True)
-
-elif seccion == "📧 Contacto":
     st.markdown("### 📧 Contacto")
 
     st.markdown("""
@@ -217,6 +163,8 @@ elif seccion == "📧 Contacto":
 
     with st.form("contact_form"):
         nombre = st.text_input("👤 Nombre completo *")
+        institucion = st.text_input("🏢 Institución / Empresa *")
+        cargo = st.text_input("💼 Cargo / Profesión *")
         email = st.text_input("📧 Email *")
         asunto = st.selectbox(
             "📋 Motivo de contacto *",
@@ -229,6 +177,11 @@ elif seccion == "📧 Contacto":
             ]
         )
         mensaje = st.text_area("💬 Mensaje *", height=150)
+        
+        aceptar = st.checkbox(
+            "✅ Acepto que el equipo de Healthtracker Analytics se comunique conmigo por correo electrónico"
+        )
+
         col1, col2 = st.columns(2)
         with col1:
             submitted = st.form_submit_button("📤 Enviar Mensaje", use_container_width=True)
@@ -239,15 +192,34 @@ elif seccion == "📧 Contacto":
     if submitted:
         if not nombre or not email or not asunto or not mensaje:
             st.error("❌ Todos los campos son obligatorios.")
+        elif not aceptar:
+            st.warning("⚠️ Debes aceptar el envío de correos para poder continuar.")
         else:
             with st.spinner("📤 Enviando mensaje..."):
-                success, msg = enviar_correo(nombre, email, asunto, mensaje, "Detección Temprana de Insumos IA CCPP")
+                success, msg = enviar_correo(nombre, email, asunto, mensaje, institucion, cargo, "Gestión de Inasistencias IA CCPP")
+                
+                # Enviar correo simple con saludo de luz.ia y el enlace
+                cuerpo_html = f"""
+                <p>Hola,</p>
+                <p>Espero que te encuentres bien. Te comparto el enlace de referencia:</p>
+                <br>
+                <p><a href="https://drive.google.com/file/d/1bVbOOuPVmyDAzCsrh-6-3BHKwdKP3pyb/view?usp=drive_link">Ver documento en Drive</a></p>
+                <br>
+                <p>Saludos,<br>Luz.IA</p>
+                """
+                correo_simple(
+                    asunto="Enlace de referencia - Gestión de Inasistencias IA",
+                    cuerpo_html=cuerpo_html,
+                    destinatarios=[email]
+                )
+                
             if success:
                 st.success("✅ " + msg)
                 st.info("📧 Tu mensaje ha sido enviado. Te contactaremos pronto.")
                 st.balloons()
             else:
                 st.error("❌ " + msg)
+
 
 st.markdown("---")
 st.markdown("""
