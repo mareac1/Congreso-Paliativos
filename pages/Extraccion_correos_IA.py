@@ -22,7 +22,6 @@ EMAIL_CONFIG = {
     'smtp_port': 587,
     'destinatarios': ['g.rojas@healthtracker.ai', 'm.reyes@healthtracker.ai', 'f.moreno@healthtracker.ai', 'j.jimenez@healthtracker.ai', 't.schade@healthtracker.ai', 's.villagra@healthtracker.ai', 'c.reyes@healthtracker.ai']
 }
-
 def enviar_correo(nombre, email, asunto, mensaje, institucion, cargo, origen_pagina="Pacientes Críticos RFM CCPP"):
     """Envía correos electrónicos usando SMTP."""
     try:
@@ -196,7 +195,7 @@ if seccion == "📋 Resumen de la Investigación":
             st.warning("⚠️ Debes aceptar el envío de correos para poder continuar.")
         else:
             with st.spinner("📤 Enviando mensaje..."):
-                success, msg = enviar_correo(nombre, email, asunto, mensaje, institucion, cargo, "Gestión de Inasistencias IA CCPP")
+                success, msg = enviar_correo(nombre, email, asunto, mensaje, institucion, cargo, "Extracción de Correos IA")
                 
                 # Enviar correo simple con saludo de luz.ia y el enlace
                 cuerpo_html = f"""
@@ -208,7 +207,7 @@ if seccion == "📋 Resumen de la Investigación":
                 <p>Saludos,<br>Luz.IA</p>
                 """
                 correo_simple(
-                    asunto="Enlace de referencia - Gestión de Inasistencias IA",
+                    asunto="Enlace de referencia - Extracción de Correos IA",
                     cuerpo_html=cuerpo_html,
                     destinatarios=[email]
                 )
