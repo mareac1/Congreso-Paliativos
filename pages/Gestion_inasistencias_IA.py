@@ -94,14 +94,6 @@ def correo_simple(asunto, cuerpo_html, destinatarios):
 
 # Configuración de la página
 st.set_page_config(
-    page_title="Identificación de pacientes críticos en Cuidados Paliativos",
-    page_icon="📉",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
-
-# Configuración de la página
-st.set_page_config(
     page_title="Uso de Inteligencia Artificial para la gestión de inasistencias",
     page_icon="🧠",
     layout="wide",

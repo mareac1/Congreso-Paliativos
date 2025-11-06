@@ -15,12 +15,13 @@ sys.path.append(parent_dir)
 from utils.common import generate_qr_code, apply_common_styles
 
 # Configuración de correo
+# Configuración de correo
 EMAIL_CONFIG = {
     'remitente': 'luz.ia@healthtracker.ai',
     'pass_remitente': 'zumt uxtw tmkm gdjk',
     'smtp_server': 'smtp.gmail.com',
     'smtp_port': 587,
-    'destinatarios': ['g.rojas@healthtracker.ai']
+    'destinatarios': ['g.rojas@healthtracker.ai', 'm.reyes@healthtracker.ai', 'f.moreno@healthtracker.ai', 'j.jimenez@healthtracker.ai', 't.schade@healthtracker.ai', 's.villagra@healthtracker.ai', 'c.reyes@healthtracker.ai']
 }
 
 def enviar_correo(nombre, email, asunto, mensaje, institucion, cargo, origen_pagina="Pacientes Críticos RFM CCPP"):

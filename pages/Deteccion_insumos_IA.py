@@ -19,7 +19,7 @@ EMAIL_CONFIG = {
     'pass_remitente': 'zumt uxtw tmkm gdjk',
     'smtp_server': 'smtp.gmail.com',
     'smtp_port': 587,
-    'destinatarios': ['g.rojas@healthtracker.ai']
+    'destinatarios': ['g.rojas@healthtracker.ai', 'm.reyes@healthtracker.ai', 'f.moreno@healthtracker.ai', 'j.jimenez@healthtracker.ai', 't.schade@healthtracker.ai', 's.villagra@healthtracker.ai', 'c.reyes@healthtracker.ai']
 }
 
 
