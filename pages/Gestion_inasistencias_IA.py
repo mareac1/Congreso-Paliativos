@@ -198,7 +198,10 @@ if seccion == "📋 Resumen de la Investigación":
             st.warning("⚠️ Debes aceptar el envío de correos para poder continuar.")
         else:
             with st.spinner("📤 Enviando mensaje..."):
-                success, msg = enviar_correo(nombre, email, asunto, mensaje, institucion, cargo, "Gestión de Inasistencias IA CCPP")
+
+                # Agregar título de la página al asunto
+                asunto_completo = f"Gestión de Inasistencias IA - {asunto}"
+                success, msg = enviar_correo(nombre, email, asunto_completo, mensaje, institucion, cargo, "Gestión de Inasistencias IA CCPP")
                 
                 # Enviar correo simple con saludo de luz.ia y el enlace
                 cuerpo_html = f"""

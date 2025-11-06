@@ -204,7 +204,11 @@ if seccion == "📋 Resumen de la Investigación":
             st.warning("⚠️ Debes aceptar el envío de correos para poder continuar.")
         else:
             with st.spinner("📤 Enviando mensaje..."):
-                success, msg = enviar_correo(nombre, email, asunto, mensaje, institucion, cargo, "Gestión de Inasistencias IA CCPP")
+
+                # Agregar título del trabajo al asunto
+                titulo_trabajo = "Identificación de pacientes críticos en Cuidados Paliativos basado en RFM"
+                asunto_con_titulo = f"{titulo_trabajo} - {asunto}"
+                success, msg = enviar_correo(nombre, email, asunto_con_titulo, mensaje, institucion, cargo, "Gestión de Inasistencias IA CCPP")
                 
                 # Enviar correo simple con saludo de luz.ia y el enlace
                 cuerpo_html = f"""
